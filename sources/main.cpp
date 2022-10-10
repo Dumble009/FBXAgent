@@ -5,7 +5,7 @@ using namespace fbxAgent;
 
 int main(void)
 {
-    std::cout << "test code start!" << std::endl;
+    std::cout << "test code start!!" << std::endl;
 
     FbxAgent agent = FbxAgent();
 

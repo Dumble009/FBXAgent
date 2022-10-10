@@ -15,7 +15,6 @@ namespace fbxAgent
 
     FbxAgentErrorCode FbxAgent::Load(std::string filePath)
     {
-        // pFbxImporterを初期化する前にすでに存在していた場合は破棄する
         if (pFbxImporter != nullptr)
         {
             pFbxImporter->Destroy();
@@ -27,7 +26,6 @@ namespace fbxAgent
             return FBX_AGENT_ERROR_FAILED_TO_CREATE_FBX_IMPORETR;
         }
 
-        // pFbxSceneを初期化する前に存在していた場合は破棄する
         if (pFbxScene != nullptr)
         {
             pFbxScene->Destroy();
@@ -38,13 +36,11 @@ namespace fbxAgent
             return FBX_AGENT_ERROR_FAILED_TO_CREATE_FBX_SCENE;
         }
 
-        // まずは指定されたパスからインポーターがファイルの内容を読み込む
         if (!pFbxImporter->Initialize(filePath.c_str()))
         {
             return FBX_AGENT_ERROR_FAILED_TO_LOAD_FILE;
         }
 
-        // インポーターが読み込んだ内容を頂点情報等に分解してシーンに読み込む
         if (!pFbxImporter->Import(pFbxScene))
         {
             return FBX_AGENT_ERROR_FAILED_TO_IMPORT;
