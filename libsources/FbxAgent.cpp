@@ -1,7 +1,12 @@
 ﻿#include "FbxAgent.h"
 namespace fbxAgent
 {
-    FbxAgent::FbxAgent() {}
+    FbxAgent::FbxAgent()
+    {
+        pFbxManager = nullptr;
+        pFbxImporter = nullptr;
+        pFbxScene = nullptr;
+    }
 
     FbxAgentErrorCode FbxAgent::Init()
     {
