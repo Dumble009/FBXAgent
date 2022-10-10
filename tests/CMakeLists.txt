@@ -4,6 +4,8 @@ project(test_project)
 # GoogleTest requires at least C++14
 set(CMAKE_CXX_STANDARD 14)
 
+set(TestName GTest)
+
 include(FetchContent)
 FetchContent_Declare(
   googletest
@@ -14,15 +16,12 @@ FetchContent_Declare(
 set(gtest_force_shared_crt ON CACHE BOOL "" FORCE)
 FetchContent_MakeAvailable(googletest)
 
-add_executable(
-    hello_test
-    hello_test.cpp
-)
+file(GLOB_RECURSE TEST_SOURCES LIST_DIRECTORIES false RELATIVE "${CMAKE_SOURCE_DIR}/tests" CONFIGURE_DEPENDS "sources/*.cpp")
 
-target_link_libraries(
-    hello_test
-    GTest::gtest_main
-)
+
+add_executable(${TestName} ${TEST_SOURCES})
+
+target_link_libraries(${TestName} GTest::gtest_main)
 
 include(GoogleTest)
-gtest_discover_tests(hello_test)
+gtest_discover_tests(${TestName})
