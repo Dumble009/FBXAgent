@@ -18,10 +18,11 @@ FetchContent_MakeAvailable(googletest)
 
 file(GLOB_RECURSE TEST_SOURCES LIST_DIRECTORIES false RELATIVE "${CMAKE_SOURCE_DIR}/tests" CONFIGURE_DEPENDS "sources/*.cpp")
 
-
 add_executable(${TestName} ${TEST_SOURCES})
 
-target_link_libraries(${TestName} GTest::gtest_main)
+target_include_directories(${TestName} PUBLIC "${CMAKE_SOURCE_DIR}/libsources" "C:/Program Files/Autodesk/FBX/FBX SDK/2020.3.2/include")
+target_link_directories(${TestName} PUBLIC "C:/Program Files/Autodesk/FBX/FBX SDK/2020.3.2/lib/vs2019/x64/debug" "${CMAKE_SOURCE_DIR}/build")
+target_link_libraries(${TestName} GTest::gtest_main libfbxsdk FBXAgent)
 
 include(GoogleTest)
 gtest_discover_tests(${TestName})

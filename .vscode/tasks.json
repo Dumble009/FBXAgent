@@ -25,12 +25,9 @@
 		{
 			"type":"shell",
 			"label": "run test",
-			"command": "ctest",
+			"command": "${workspaceRoot}/build/tests/GTest.exe",
 			"dependsOn":["cmake"],
 			"dependsOrder": "sequence",
-			"options": {
-				"cwd": "${workspaceRoot}/build"
-			},
 			"group": {
 				"kind": "build"
 			}
