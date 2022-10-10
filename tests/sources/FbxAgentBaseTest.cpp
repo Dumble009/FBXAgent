@@ -19,7 +19,7 @@ TEST(FbxAgentLoad, BasicAssertions)
 
     agent.Init();
 
-    auto ret = agent.Load("C:/Users/daich/Documents/FBXAgent/vikingroom");
+    auto ret = agent.Load("./vikingroom/vikingroom.fbx");
 
     ASSERT_EQ(ret, FBX_AGENT_SUCCESS) << "ret value is : " << ret;
 }

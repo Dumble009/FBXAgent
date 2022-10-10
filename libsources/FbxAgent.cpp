@@ -61,9 +61,9 @@ namespace fbxAgent
 
     FbxAgent::~FbxAgent()
     {
-        if (pFbxManager != nullptr)
+        if (pFbxScene != nullptr)
         {
-            pFbxManager->Destroy();
+            pFbxScene->Destroy();
         }
 
         if (pFbxImporter != nullptr)
@@ -71,9 +71,9 @@ namespace fbxAgent
             pFbxImporter->Destroy();
         }
 
-        if (pFbxScene != nullptr)
+        if (pFbxManager != nullptr)
         {
-            pFbxScene->Destroy();
+            pFbxManager->Destroy();
         }
     }
 }
