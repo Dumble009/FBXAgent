@@ -27,7 +27,7 @@ int main(void)
         return 1;
     }
 
-    std::cout << "test code finish!" << std::endl;
+    std::cout << "test code finish!!" << std::endl;
 
     return 0;
 }
