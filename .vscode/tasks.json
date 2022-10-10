@@ -21,11 +21,25 @@
 			},
 			"command": "build"
 		},
+		
+		{
+			"type":"shell",
+			"label": "run test",
+			"command": "ctest",
+			"dependsOn":["cmake"],
+			"dependsOrder": "sequence",
+			"options": {
+				"cwd": "${workspaceRoot}/build"
+			},
+			"group": {
+				"kind": "build"
+			}
+		},
 		{
 			"type":"shell",
 			"label": "run executable",
 			"command": "${workspaceRoot}/build/FBXAgentTest.exe",
-			"dependsOn":["cmake"],
+			"dependsOn":["run test"],
 			"dependsOrder": "sequence",
 			"group": {
 				"kind": "build",
