@@ -1,4 +1,4 @@
-#include <iostream>
+﻿#include <iostream>
 #include "FbxAgent.h"
 
 using namespace fbxAgent;
@@ -19,7 +19,7 @@ int main(void)
         return 1;
     }
 
-    ret = agent.Load("./vikingroom/vikingroom.fbx");
+    // ret = agent.Load("./vikingroom/vikingroom.fbx");
 
     if (ret < 0)
     {
