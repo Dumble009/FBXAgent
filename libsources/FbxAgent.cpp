@@ -15,6 +15,11 @@ namespace fbxAgent
 
     FbxAgentErrorCode FbxAgent::Load(std::string filePath)
     {
+        if (pFbxManager == nullptr)
+        {
+            return FBX_AGENT_ERROR_AGENT_IS_NOT_INITIALIZED;
+        }
+
         if (pFbxImporter != nullptr)
         {
             pFbxImporter->Destroy();
