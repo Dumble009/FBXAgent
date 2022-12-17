@@ -1,6 +1,7 @@
 ﻿#pragma once
 #include <string>
 #include <vector>
+#include <queue>
 #define FBXSDK_SHARED
 #include <fbxsdk.h>
 #include "Vector3.h"

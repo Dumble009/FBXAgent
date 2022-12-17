@@ -12,6 +12,9 @@ namespace fbxAgent
 
         vertexPositonCount = 0;
         vertexPositions = std::vector<Vector3>();
+
+        vertexIndexCount = 0;
+        vertexIndices = std::vector<int>();
     }
 
     FbxAgentErrorCode FbxAgent::Init()
@@ -79,22 +82,54 @@ namespace fbxAgent
 
     FbxAgentErrorCode FbxAgent::LoadVertices(const fbxsdk::FbxScene *scene)
     {
-        auto mesh = scene->GetSrcObject<fbxsdk::FbxMesh>();
-        if (mesh == nullptr)
+        // sceneに含まれる全てのノードを探索し、
+        // 各ノードに含まれる全てのAttributeを調べて、その中からMeshを全て取り出す
+        std::queue<fbxsdk::FbxMesh *> meshQ;
+        std::queue<fbxsdk::FbxNode *> nodeQ;
+
+        auto rootNode = scene->GetRootNode();
+        nodeQ.push(rootNode);
+        while (!nodeQ.empty())
         {
-            return FBX_AGENT_ERROR_FAILED_TO_LOAD_MESH_DATA;
+            auto node = nodeQ.front();
+            nodeQ.pop();
+
+            int attributeCount = node->GetNodeAttributeCount();
+            for (int i = 0; i < attributeCount; i++)
+            {
+                auto attribute = node->GetNodeAttributeByIndex(i);
+                auto type = attribute->GetAttributeType();
+
+                if (type == fbxsdk::FbxNodeAttribute::EType::eMesh)
+                {
+                    meshQ.push((fbxsdk::FbxMesh *)attribute);
+                }
+            }
+
+            int childCount = node->GetChildCount();
+            for (int i = 0; i < childCount; i++)
+            {
+                auto child = node->GetChild(i);
+                nodeQ.push(child);
+            }
         }
 
-        auto ret = LoadVertexPositions(mesh);
-        if (ret != FBX_AGENT_SUCCESS)
+        while (!meshQ.empty())
         {
-            return ret;
-        }
+            auto mesh = meshQ.front();
+            meshQ.pop();
 
-        ret = LoadVertexIndices(mesh);
-        if (ret != FBX_AGENT_SUCCESS)
-        {
-            return ret;
+            auto ret = LoadVertexPositions(mesh);
+            if (ret != FBX_AGENT_SUCCESS)
+            {
+                return ret;
+            }
+
+            ret = LoadVertexIndices(mesh);
+            if (ret != FBX_AGENT_SUCCESS)
+            {
+                return ret;
+            }
         }
 
         return FBX_AGENT_SUCCESS;
@@ -102,15 +137,13 @@ namespace fbxAgent
 
     FbxAgentErrorCode FbxAgent::LoadVertexPositions(const fbxsdk::FbxMesh *mesh)
     {
-        vertexPositonCount = mesh->GetControlPointsCount();
-        vertexPositions = std::vector<Vector3>(vertexPositonCount);
+        vertexPositonCount += mesh->GetControlPointsCount();
 
         for (int i = 0; i < vertexPositonCount; i++)
         {
             auto point = mesh->GetControlPointAt(i);
-            vertexPositions[i].x = (float)point[0];
-            vertexPositions[i].y = (float)point[1];
-            vertexPositions[i].z = (float)point[2];
+            vertexPositions.push_back(
+                Vector3((float)point[0], (float)point[1], (float)point[2]));
         }
 
         return FBX_AGENT_SUCCESS;
@@ -118,14 +151,13 @@ namespace fbxAgent
 
     FbxAgentErrorCode FbxAgent::LoadVertexIndices(const fbxsdk::FbxMesh *mesh)
     {
-        vertexIndexCount = mesh->GetPolygonVertexCount();
-        vertexIndices = std::vector<int>(vertexIndexCount);
+        vertexIndexCount += mesh->GetPolygonVertexCount();
 
         auto vertices = mesh->GetPolygonVertices();
 
         for (int i = 0; i < vertexIndexCount; i++)
         {
-            vertexIndices[i] = vertices[i];
+            vertexIndices.push_back(vertices[i]);
         }
 
         return FBX_AGENT_SUCCESS;
