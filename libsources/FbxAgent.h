@@ -1,5 +1,6 @@
 ﻿#pragma once
 #include <string>
+#include <vector>
 #include <fbxsdk.h>
 
 #define FBX_AGENT_SUCCESS (0)
@@ -20,6 +21,10 @@ namespace fbxAgent
         fbxsdk::FbxManager *pFbxManager;
         fbxsdk::FbxImporter *pFbxImporter;
         fbxsdk::FbxScene *pFbxScene;
+
+        FbxAgentErrorCode LoadVertices(const fbxsdk::FbxScene *scene);
+        FbxAgentErrorCode LoadVertexPositions(const fbxsdk::FbxMesh *mesh);
+        FbxAgentErrorCode LoadVertexIndices(const fbxsdk::FbxMesh *mesh);
 
     public:
         FbxAgent();
