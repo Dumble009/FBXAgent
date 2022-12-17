@@ -12,15 +12,17 @@ TEST(VertexLoadTest, BasicAssertions)
 
     ASSERT_EQ(ret, FBX_AGENT_SUCCESS) << "ret value is : " << ret;
 
-    ret = agent.Load("./vikingroom/vikingroom.fbx");
+    ret = agent.Load("./assets/box.fbx");
 
     ASSERT_EQ(ret, FBX_AGENT_SUCCESS) << "ret value is : " << ret;
 
     int positionCount = agent.GetVertexPositionCount();
 
-    ASSERT_EQ(positionCount, 6179);
+    // 箱の各角に頂点が一つずつ
+    ASSERT_EQ(positionCount, 8);
 
     int indexCount = agent.GetVertexIndexCount();
 
-    ASSERT_EQ(indexCount, 3829 * 3);
+    // 6面が2つのポリゴンがあり、1つのポリゴンに3つの頂点がある
+    ASSERT_EQ(indexCount, 6 * 2 * 3);
 }

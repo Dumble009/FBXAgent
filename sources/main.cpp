@@ -19,7 +19,7 @@ int main(void)
         return 1;
     }
 
-    ret = agent.Load("./vikingroom/vikingroom.fbx");
+    ret = agent.Load("./assets/vikingroom.fbx");
 
     if (ret < 0)
     {
