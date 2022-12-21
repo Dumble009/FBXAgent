@@ -26,26 +26,26 @@ namespace fbxAgent
 
     int Model::GetVertexPositionCount()
     {
-        return 0;
+        return vertexPositonCount;
     }
 
     std::vector<Vector3> *Model::GetVertexPositions()
     {
-        return nullptr;
+        return &vertexPositions;
     }
 
     int Model::GetVertexIndexCount()
     {
-        return 0;
+        return vertexIndexCount;
     }
 
     std::vector<int> *Model::GetVertexIndices()
     {
-        return nullptr;
+        return &vertexIndices;
     }
 
     std::vector<std::vector<Vector2>> *Model::GetVertexUVs()
     {
-        return nullptr;
+        return &vertexUVs;
     }
 }

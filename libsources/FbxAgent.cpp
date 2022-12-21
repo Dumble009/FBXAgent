@@ -1,5 +1,8 @@
 ﻿#include "FbxAgent.h"
 
+// internelなヘッダはユーザに見せないので、実装部でインクルードする
+#include "internal/ModelLoader.h"
+
 #define FBXSDK_NEW_API
 
 namespace fbxAgent
@@ -121,17 +124,21 @@ namespace fbxAgent
             auto mesh = meshQ.front();
             meshQ.pop();
 
-            auto ret = LoadVertexPosition(mesh);
-            if (ret != FbxAgentErrorCode::FBX_AGENT_SUCCESS)
-            {
-                return ret;
-            }
+            models.push_back(Model());
 
-            ret = LoadVertexIndices(mesh);
-            if (ret != FbxAgentErrorCode::FBX_AGENT_SUCCESS)
-            {
-                return ret;
-            }
+            internal::ModelLoader::LoadModel(mesh, &(models.back()));
+
+            /*auto ret = LoadVertexPosition(mesh);
+if (ret != FbxAgentErrorCode::FBX_AGENT_SUCCESS)
+{
+    return ret;
+}
+
+ret = LoadVertexIndices(mesh);
+if (ret != FbxAgentErrorCode::FBX_AGENT_SUCCESS)
+{
+    return ret;
+}*/
         }
 
         return FbxAgentErrorCode::FBX_AGENT_SUCCESS;
@@ -246,9 +253,16 @@ namespace fbxAgent
         return vertexIndexCount;
     }
 
-    FbxAgentErrorCode FbxAgent::GetModelByIndex(int index, Model *model)
+    FbxAgentErrorCode FbxAgent::GetModelByIndex(int index, Model **model)
     {
-        return FbxAgentErrorCode::FBX_AGENT_ERROR_MODEL_INDEX_OUT_OF_RANGE;
+        if (index >= (int)models.size())
+        {
+            return FbxAgentErrorCode::FBX_AGENT_ERROR_MODEL_INDEX_OUT_OF_RANGE;
+        }
+
+        *model = &(models[index]);
+
+        return FbxAgentErrorCode::FBX_AGENT_SUCCESS;
     }
 
     FbxAgent::~FbxAgent()

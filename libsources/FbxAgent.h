@@ -27,6 +27,8 @@ namespace fbxAgent
         int vertexIndexCount; // 頂点インデックスデータの数
         std::vector<int> vertexIndices;
 
+        std::vector<Model> models; // fbxファイルから抽出したモデルのリスト
+
         FbxAgentErrorCode LoadVertices(const fbxsdk::FbxScene *scene);     // 頂点情報をメンバ変数にロードする
         FbxAgentErrorCode LoadVertexPosition(const fbxsdk::FbxMesh *mesh); // 各頂点の座標をメンバ変数にロードする
         FbxAgentErrorCode LoadVertexIndices(const fbxsdk::FbxMesh *mesh);  // 各頂点のインデックス情報をメンバ変数にロードする
@@ -41,6 +43,6 @@ namespace fbxAgent
         int GetVertexPositionCount();
         int GetVertexIndexCount();
 
-        FbxAgentErrorCode GetModelByIndex(int index, Model *model);
+        FbxAgentErrorCode GetModelByIndex(int index, Model **model);
     };
 }
