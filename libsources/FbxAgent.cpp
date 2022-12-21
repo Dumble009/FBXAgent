@@ -246,7 +246,7 @@ namespace fbxAgent
         return vertexIndexCount;
     }
 
-    FbxAgentErrorCode FbxAgent::GetModelByIndex(int index, Model **model)
+    FbxAgentErrorCode FbxAgent::GetModelByIndex(int index, Model *model)
     {
         return FbxAgentErrorCode::FBX_AGENT_ERROR_MODEL_INDEX_OUT_OF_RANGE;
     }

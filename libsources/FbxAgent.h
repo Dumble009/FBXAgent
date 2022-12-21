@@ -41,6 +41,6 @@ namespace fbxAgent
         int GetVertexPositionCount();
         int GetVertexIndexCount();
 
-        FbxAgentErrorCode GetModelByIndex(int index, Model **model);
+        FbxAgentErrorCode GetModelByIndex(int index, Model *model);
     };
 }

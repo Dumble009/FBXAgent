@@ -16,16 +16,16 @@ TEST(VertexLoadTest, BasicAssertions)
 
     ASSERT_EQ(ret, fbxAgent::FbxAgentErrorCode::FBX_AGENT_SUCCESS) << "ret value is : " << (int)ret;
 
-    Model *model;
+    Model model;
     ret = agent.GetModelByIndex(0, &model); // 箱のfbxファイルは一つの3Dモデルのみからなる
 
     ASSERT_EQ(ret, fbxAgent::FbxAgentErrorCode::FBX_AGENT_SUCCESS) << "ret value is : " << (int)ret;
 
-    int positionCount = model->GetVertexPositionCount();
+    int positionCount = model.GetVertexPositionCount();
 
     ASSERT_EQ(positionCount, 8);
 
-    int indexCount = model->GetVertexIndexCount();
+    int indexCount = model.GetVertexIndexCount();
 
     ASSERT_EQ(indexCount, 6 * 2 * 3);
     /*
