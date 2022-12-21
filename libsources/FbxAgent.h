@@ -8,21 +8,10 @@
 #include "Vector3.h"
 #include "Vector2.h"
 #include "Model.h"
-
-#define FBX_AGENT_SUCCESS (0)
-#define FBX_AGENT_ERROR_FAILED_TO_CREATE_FBX_MANAGER (-1)
-#define FBX_AGENT_ERROR_FAILED_TO_CREATE_FBX_IMPORETR (-2)
-#define FBX_AGENT_ERROR_FAILED_TO_CREATE_FBX_SCENE (-3)
-#define FBX_AGENT_ERROR_FAILED_TO_LOAD_FILE (-4)
-#define FBX_AGENT_ERROR_FAILED_TO_IMPORT (-5)
-#define FBX_AGENT_ERROR_AGENT_IS_NOT_INITIALIZED (-6)
-#define FBX_AGENT_ERROR_FAILED_TO_LOAD_MESH_DATA (-7)
-#define FBX_AGENT_ERROR_MODEL_INDEX_OUT_OF_RANGE (-8)
+#include "ErrorCodes.h"
 
 namespace fbxAgent
 {
-    typedef int FbxAgentErrorCode;
-
     class FbxAgent
     {
     private:

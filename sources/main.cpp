@@ -9,21 +9,21 @@ int main(void)
 
     FbxAgent agent = FbxAgent();
 
-    FbxAgentErrorCode ret = 0;
+    FbxAgentErrorCode ret = FbxAgentErrorCode::FBX_AGENT_SUCCESS;
 
     ret = agent.Init();
 
-    if (ret < 0)
+    if (ret != FbxAgentErrorCode::FBX_AGENT_SUCCESS)
     {
-        std::cerr << "agent.Init failed error code : " << ret << std::endl;
+        std::cerr << "agent.Init failed error code : " << (int)ret << std::endl;
         return 1;
     }
 
     ret = agent.Load("./assets/vikingroom.fbx");
 
-    if (ret < 0)
+    if (ret != FbxAgentErrorCode::FBX_AGENT_SUCCESS)
     {
-        std::cerr << "agent.Load failed error code : " << ret << std::endl;
+        std::cerr << "agent.Load failed error code : " << (int)ret << std::endl;
         return 1;
     }
 

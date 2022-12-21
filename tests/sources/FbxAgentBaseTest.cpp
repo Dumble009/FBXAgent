@@ -10,7 +10,7 @@ TEST(FbxAgentInit, BasicAssertions)
 
     auto ret = agent.Init();
 
-    ASSERT_EQ(ret, FBX_AGENT_SUCCESS) << "ret value is : " << ret;
+    ASSERT_EQ(ret, fbxAgent::FbxAgentErrorCode::FBX_AGENT_SUCCESS) << "ret value is : " << (int)ret;
 }
 
 TEST(FbxAgentLoad, BasicAssertions)
@@ -21,5 +21,5 @@ TEST(FbxAgentLoad, BasicAssertions)
 
     auto ret = agent.Load("./assets/box.fbx");
 
-    ASSERT_EQ(ret, FBX_AGENT_SUCCESS) << "ret value is : " << ret;
+    ASSERT_EQ(ret, fbxAgent::FbxAgentErrorCode::FBX_AGENT_SUCCESS) << "ret value is : " << (int)ret;
 }

@@ -10,16 +10,16 @@ TEST(VertexLoadTest, BasicAssertions)
 
     auto ret = agent.Init();
 
-    ASSERT_EQ(ret, FBX_AGENT_SUCCESS) << "ret value is : " << ret;
+    ASSERT_EQ(ret, fbxAgent::FbxAgentErrorCode::FBX_AGENT_SUCCESS) << "ret value is : " << (int)ret;
 
     ret = agent.Load("./assets/box.fbx");
 
-    ASSERT_EQ(ret, FBX_AGENT_SUCCESS) << "ret value is : " << ret;
+    ASSERT_EQ(ret, fbxAgent::FbxAgentErrorCode::FBX_AGENT_SUCCESS) << "ret value is : " << (int)ret;
 
     Model *model;
     ret = agent.GetModelByIndex(0, &model); // 箱のfbxファイルは一つの3Dモデルのみからなる
 
-    ASSERT_EQ(ret, FBX_AGENT_SUCCESS) << "ret value is : " << ret;
+    ASSERT_EQ(ret, fbxAgent::FbxAgentErrorCode::FBX_AGENT_SUCCESS) << "ret value is : " << (int)ret;
 
     int positionCount = model->GetVertexPositionCount();
 

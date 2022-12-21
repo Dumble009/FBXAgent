@@ -24,16 +24,16 @@ namespace fbxAgent
         pFbxManager = fbxsdk::FbxManager::Create();
         if (pFbxManager == nullptr)
         {
-            return FBX_AGENT_ERROR_FAILED_TO_CREATE_FBX_MANAGER;
+            return FbxAgentErrorCode::FBX_AGENT_ERROR_FAILED_TO_CREATE_FBX_MANAGER;
         }
-        return FBX_AGENT_SUCCESS;
+        return FbxAgentErrorCode::FBX_AGENT_SUCCESS;
     }
 
     FbxAgentErrorCode FbxAgent::Load(std::string filePath)
     {
         if (pFbxManager == nullptr)
         {
-            return FBX_AGENT_ERROR_AGENT_IS_NOT_INITIALIZED;
+            return FbxAgentErrorCode::FBX_AGENT_ERROR_AGENT_IS_NOT_INITIALIZED;
         }
 
         if (pFbxImporter != nullptr)
@@ -44,7 +44,7 @@ namespace fbxAgent
         pFbxImporter = fbxsdk::FbxImporter::Create(pFbxManager, "importer");
         if (pFbxImporter == nullptr)
         {
-            return FBX_AGENT_ERROR_FAILED_TO_CREATE_FBX_IMPORETR;
+            return FbxAgentErrorCode::FBX_AGENT_ERROR_FAILED_TO_CREATE_FBX_IMPORETR;
         }
 
         if (pFbxScene != nullptr)
@@ -54,19 +54,19 @@ namespace fbxAgent
         pFbxScene = fbxsdk::FbxScene::Create(pFbxManager, "scene");
         if (pFbxScene == nullptr)
         {
-            return FBX_AGENT_ERROR_FAILED_TO_CREATE_FBX_SCENE;
+            return FbxAgentErrorCode::FBX_AGENT_ERROR_FAILED_TO_CREATE_FBX_SCENE;
         }
 
         // ファイルをImporterに読み込む
         if (!pFbxImporter->Initialize(filePath.c_str()))
         {
-            return FBX_AGENT_ERROR_FAILED_TO_LOAD_FILE;
+            return FbxAgentErrorCode::FBX_AGENT_ERROR_FAILED_TO_LOAD_FILE;
         }
 
         // 読み込んだファイルを頂点バッファやマテリアルなどの要素ごとに分解してSceneに展開する
         if (!pFbxImporter->Import(pFbxScene))
         {
-            return FBX_AGENT_ERROR_FAILED_TO_IMPORT;
+            return FbxAgentErrorCode::FBX_AGENT_ERROR_FAILED_TO_IMPORT;
         }
 
         // 読み込み完了後はImporterは不要なので削除しておく
@@ -122,19 +122,19 @@ namespace fbxAgent
             meshQ.pop();
 
             auto ret = LoadVertexPosition(mesh);
-            if (ret != FBX_AGENT_SUCCESS)
+            if (ret != FbxAgentErrorCode::FBX_AGENT_SUCCESS)
             {
                 return ret;
             }
 
             ret = LoadVertexIndices(mesh);
-            if (ret != FBX_AGENT_SUCCESS)
+            if (ret != FbxAgentErrorCode::FBX_AGENT_SUCCESS)
             {
                 return ret;
             }
         }
 
-        return FBX_AGENT_SUCCESS;
+        return FbxAgentErrorCode::FBX_AGENT_SUCCESS;
     }
 
     FbxAgentErrorCode FbxAgent::LoadVertexPosition(const fbxsdk::FbxMesh *mesh)
@@ -148,7 +148,7 @@ namespace fbxAgent
                 Vector3((float)point[0], (float)point[1], (float)point[2]));
         }
 
-        return FBX_AGENT_SUCCESS;
+        return FbxAgentErrorCode::FBX_AGENT_SUCCESS;
     }
 
     FbxAgentErrorCode FbxAgent::LoadVertexIndices(const fbxsdk::FbxMesh *mesh)
@@ -162,7 +162,7 @@ namespace fbxAgent
             vertexIndices.push_back(vertices[i]);
         }
 
-        return FBX_AGENT_SUCCESS;
+        return FbxAgentErrorCode::FBX_AGENT_SUCCESS;
     }
 
     // LoadVertexIndicesの後に呼び出されることを前提としている
@@ -233,7 +233,7 @@ namespace fbxAgent
             }
         }
 
-        return FBX_AGENT_SUCCESS;
+        return FbxAgentErrorCode::FBX_AGENT_SUCCESS;
     }
 
     int FbxAgent::GetVertexPositionCount()
@@ -248,7 +248,7 @@ namespace fbxAgent
 
     FbxAgentErrorCode FbxAgent::GetModelByIndex(int index, Model **model)
     {
-        return FBX_AGENT_ERROR_MODEL_INDEX_OUT_OF_RANGE;
+        return FbxAgentErrorCode::FBX_AGENT_ERROR_MODEL_INDEX_OUT_OF_RANGE;
     }
 
     FbxAgent::~FbxAgent()
