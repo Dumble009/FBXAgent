@@ -16,6 +16,19 @@ TEST(VertexLoadTest, BasicAssertions)
 
     ASSERT_EQ(ret, FBX_AGENT_SUCCESS) << "ret value is : " << ret;
 
+    Model *model;
+    ret = agent.GetModelByIndex(0, &model); // 箱のfbxファイルは一つの3Dモデルのみからなる
+
+    ASSERT_EQ(ret, FBX_AGENT_SUCCESS) << "ret value is : " << ret;
+
+    int positionCount = model->GetVertexPositionCount();
+
+    ASSERT_EQ(positionCount, 8);
+
+    int indexCount = model->GetVertexIndexCount();
+
+    ASSERT_EQ(indexCount, 6 * 2 * 3);
+    /*
     int positionCount = agent.GetVertexPositionCount();
 
     // 箱の各角に頂点が一つずつ
@@ -25,4 +38,5 @@ TEST(VertexLoadTest, BasicAssertions)
 
     // 6面が2つのポリゴンがあり、1つのポリゴンに3つの頂点がある
     ASSERT_EQ(indexCount, 6 * 2 * 3);
+    */
 }

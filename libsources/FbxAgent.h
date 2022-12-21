@@ -2,9 +2,12 @@
 #include <string>
 #include <vector>
 #include <queue>
+
 #define FBXSDK_SHARED
 #include <fbxsdk.h>
 #include "Vector3.h"
+#include "Vector2.h"
+#include "Model.h"
 
 #define FBX_AGENT_SUCCESS (0)
 #define FBX_AGENT_ERROR_FAILED_TO_CREATE_FBX_MANAGER (-1)
@@ -14,6 +17,7 @@
 #define FBX_AGENT_ERROR_FAILED_TO_IMPORT (-5)
 #define FBX_AGENT_ERROR_AGENT_IS_NOT_INITIALIZED (-6)
 #define FBX_AGENT_ERROR_FAILED_TO_LOAD_MESH_DATA (-7)
+#define FBX_AGENT_ERROR_MODEL_INDEX_OUT_OF_RANGE (-8)
 
 namespace fbxAgent
 {
@@ -29,12 +33,15 @@ namespace fbxAgent
         int vertexPositonCount; // 頂点座標データの数
         std::vector<Vector3> vertexPositions;
 
+        std::vector<std::vector<Vector2>> vertexUVs; // [vertexIndexCount][vertexUVLayerCount]の配列
+
         int vertexIndexCount; // 頂点インデックスデータの数
         std::vector<int> vertexIndices;
 
-        FbxAgentErrorCode LoadVertices(const fbxsdk::FbxScene *scene);      // 頂点情報をメンバ変数にロードする
-        FbxAgentErrorCode LoadVertexPositions(const fbxsdk::FbxMesh *mesh); // 各頂点の座標をメンバ変数にロードする
-        FbxAgentErrorCode LoadVertexIndices(const fbxsdk::FbxMesh *mesh);   // 各頂点のインデックス情報をメンバ変数にロードする
+        FbxAgentErrorCode LoadVertices(const fbxsdk::FbxScene *scene);     // 頂点情報をメンバ変数にロードする
+        FbxAgentErrorCode LoadVertexPosition(const fbxsdk::FbxMesh *mesh); // 各頂点の座標をメンバ変数にロードする
+        FbxAgentErrorCode LoadVertexIndices(const fbxsdk::FbxMesh *mesh);  // 各頂点のインデックス情報をメンバ変数にロードする
+        FbxAgentErrorCode LoadVertexUVs(const fbxsdk::FbxMesh *mesh);      // UV情報を取り出す。UV情報は各ポリゴンの頂点毎に割り振られる。
 
     public:
         FbxAgent();
@@ -44,5 +51,7 @@ namespace fbxAgent
 
         int GetVertexPositionCount();
         int GetVertexIndexCount();
+
+        FbxAgentErrorCode GetModelByIndex(int index, Model **model);
     };
 }

@@ -15,6 +15,8 @@ namespace fbxAgent
 
         vertexIndexCount = 0;
         vertexIndices = std::vector<int>();
+
+        vertexUVs = std::vector<std::vector<Vector2>>();
     }
 
     FbxAgentErrorCode FbxAgent::Init()
@@ -119,7 +121,7 @@ namespace fbxAgent
             auto mesh = meshQ.front();
             meshQ.pop();
 
-            auto ret = LoadVertexPositions(mesh);
+            auto ret = LoadVertexPosition(mesh);
             if (ret != FBX_AGENT_SUCCESS)
             {
                 return ret;
@@ -135,7 +137,7 @@ namespace fbxAgent
         return FBX_AGENT_SUCCESS;
     }
 
-    FbxAgentErrorCode FbxAgent::LoadVertexPositions(const fbxsdk::FbxMesh *mesh)
+    FbxAgentErrorCode FbxAgent::LoadVertexPosition(const fbxsdk::FbxMesh *mesh)
     {
         vertexPositonCount += mesh->GetControlPointsCount();
 
@@ -163,6 +165,77 @@ namespace fbxAgent
         return FBX_AGENT_SUCCESS;
     }
 
+    // LoadVertexIndicesの後に呼び出されることを前提としている
+    FbxAgentErrorCode FbxAgent::LoadVertexUVs(const fbxsdk::FbxMesh *mesh)
+    {
+        // TODO : UV座標をどういう風に展開すればVulkanで扱いやすい形に出来るのか考える。マッピングモードの違いにどう対処する？
+        // 同じFbxMesh内の頂点は全て同じレイヤを持っているという前提を置いている
+        int layerCount = mesh->GetLayerCount();
+        int startIndex = vertexUVs.size();
+        int vertexCount = mesh->GetPolygonVertexCount();
+
+        for (int i = 0; i < vertexCount; i++)
+        {
+            vertexUVs.push_back(std::vector<Vector2>());
+        }
+
+        for (int layerIdx = 0; layerIdx < layerCount; layerIdx++)
+        {
+            auto layer = mesh->GetLayer(layerIdx);
+            auto elem = layer->GetUVs();
+            if (elem == nullptr)
+            {
+                continue;
+            }
+
+            int uvArraySize = elem->GetDirectArray().GetCount();
+            int indexSize = elem->GetIndexArray().GetCount();
+            int size = std::max(uvArraySize, indexSize); // マッピングの仕方によってUV情報の数が異なる
+
+            std::vector<Vector2> uvs = std::vector<Vector2>();
+
+            auto refMode = elem->GetReferenceMode();
+
+            for (int i = 0; i < size; i++)
+            {
+                fbxsdk::FbxVector2 uv;
+                // UV情報の参照の仕方には、直接アクセスするものとインデックスバッファを使用するものがある
+                // ここでいうインデックスは頂点インデックスとは別物
+                if (refMode == fbxsdk::FbxLayerElement::eDirect)
+                {
+                    uv = elem->GetDirectArray().GetAt(i);
+                }
+                else
+                {
+                    int index = elem->GetIndexArray().GetAt(i);
+                    uv = elem->GetDirectArray().GetAt(index);
+                }
+
+                float x = (float)uv[0];
+                float y = (float)uv[1];
+                uvs.emplace_back(x, y);
+            }
+
+            std::vector<Vector2> res;
+
+            auto mapMode = elem->GetMappingMode();
+            if (mapMode == fbxsdk::FbxLayerElement::EMappingMode::eByPolygonVertex)
+            {
+                res = uvs; // uv情報がポリゴンの頂点毎に割り当てられている場合はそのまま結果として使える。
+            }
+            else
+            {
+                // uv情報がコントロールポイント毎に割り当てられている場合は、ポリゴンの頂点毎に振りなおす必要がある
+                for (int i = startIndex; i < startIndex + vertexCount; i++)
+                {
+                    int vertexIndex = vertexIndices[i]; //
+                }
+            }
+        }
+
+        return FBX_AGENT_SUCCESS;
+    }
+
     int FbxAgent::GetVertexPositionCount()
     {
         return vertexPositonCount;
@@ -171,6 +244,11 @@ namespace fbxAgent
     int FbxAgent::GetVertexIndexCount()
     {
         return vertexIndexCount;
+    }
+
+    FbxAgentErrorCode FbxAgent::GetModelByIndex(int index, Model **model)
+    {
+        return FBX_AGENT_ERROR_MODEL_INDEX_OUT_OF_RANGE;
     }
 
     FbxAgent::~FbxAgent()
