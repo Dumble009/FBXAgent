@@ -11,6 +11,6 @@ namespace fbxAgent
         Vector3();
         Vector3(float _x, float _y, float _z);
 
-        bool operator==(const Vector3 &v);
+        bool operator==(const Vector3 &v) const;
     };
 }

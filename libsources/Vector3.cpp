@@ -18,7 +18,7 @@ namespace fbxAgent
         z = _z;
     }
 
-    bool Vector3::operator==(const Vector3 &v)
+    bool Vector3::operator==(const Vector3 &v) const
     {
         return IsFloatAlmostSame(v.x, this->x) &&
                IsFloatAlmostSame(v.y, this->y) &&

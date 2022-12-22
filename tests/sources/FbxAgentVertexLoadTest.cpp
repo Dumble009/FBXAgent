@@ -3,11 +3,16 @@
 
 using namespace fbxAgent;
 
+// Vector3のリストの中にvと一致するベクトルが存在しているかどうか
 bool IsPositionContainedInVector(const Vector3 &v, const std::vector<Vector3> *positions)
 {
     for (auto itr = positions->begin(); itr != positions->end(); itr++)
     {
+        if ((*itr) == v)
+        {
+            return true;
         }
+    }
     return false;
 }
 
@@ -38,4 +43,14 @@ TEST(VertexLoadTest, BasicAssertions)
     int indexCount = model->GetVertexIndexCount();
 
     ASSERT_EQ(indexCount, 6 * 2 * 3);
+
+    // 各コントロールポイントの座標が正しいかどうかの判定
+    ASSERT_EQ(IsPositionContainedInVector(Vector3(1, 1, 1), model->GetVertexPositions()), true);
+    ASSERT_EQ(IsPositionContainedInVector(Vector3(-1, 1, 1), model->GetVertexPositions()), true);
+    ASSERT_EQ(IsPositionContainedInVector(Vector3(1, -1, 1), model->GetVertexPositions()), true);
+    ASSERT_EQ(IsPositionContainedInVector(Vector3(-1, -1, 1), model->GetVertexPositions()), true);
+    ASSERT_EQ(IsPositionContainedInVector(Vector3(1, 1, -1), model->GetVertexPositions()), true);
+    ASSERT_EQ(IsPositionContainedInVector(Vector3(-1, 1, -1), model->GetVertexPositions()), true);
+    ASSERT_EQ(IsPositionContainedInVector(Vector3(1, -1, -1), model->GetVertexPositions()), true);
+    ASSERT_EQ(IsPositionContainedInVector(Vector3(-1, -1, -1), model->GetVertexPositions()), true);
 }
