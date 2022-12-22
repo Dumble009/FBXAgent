@@ -1,20 +1,14 @@
 ﻿#include <gtest/gtest.h>
+
+#include <algorithm>
 #include "FbxAgent.h"
 
-using namespace fbxAgent;
+#include "internal/common/CommonUtil.h"
 
-// Vector3のリストの中にvと一致するベクトルが存在しているかどうか
-bool IsPositionContainedInVector(const Vector3 &v, const std::vector<Vector3> *positions)
-{
-    for (auto itr = positions->begin(); itr != positions->end(); itr++)
-    {
-        if ((*itr) == v)
-        {
-            return true;
-        }
-    }
-    return false;
-}
+#define IsVector3ContainedInVector(x, y, z, v) ASSERT_EQ(IsValueContainedInVector(Vector3(x, y, z), v), true)
+#define IsVector2ContainedInVector(x, y, v) ASSERT_EQ(IsValueContainedInVector(Vector2(x, y), v), true)
+
+using namespace fbxAgent;
 
 // 頂点座標とインデックスデータを読み込むことが出来るかどうかを確かめる
 TEST(VertexLoadTest, BasicAssertions)
@@ -45,12 +39,54 @@ TEST(VertexLoadTest, BasicAssertions)
     ASSERT_EQ(indexCount, 6 * 2 * 3);
 
     // 各コントロールポイントの座標が正しいかどうかの判定
-    ASSERT_EQ(IsPositionContainedInVector(Vector3(1, 1, 1), model->GetVertexPositions()), true);
-    ASSERT_EQ(IsPositionContainedInVector(Vector3(-1, 1, 1), model->GetVertexPositions()), true);
-    ASSERT_EQ(IsPositionContainedInVector(Vector3(1, -1, 1), model->GetVertexPositions()), true);
-    ASSERT_EQ(IsPositionContainedInVector(Vector3(-1, -1, 1), model->GetVertexPositions()), true);
-    ASSERT_EQ(IsPositionContainedInVector(Vector3(1, 1, -1), model->GetVertexPositions()), true);
-    ASSERT_EQ(IsPositionContainedInVector(Vector3(-1, 1, -1), model->GetVertexPositions()), true);
-    ASSERT_EQ(IsPositionContainedInVector(Vector3(1, -1, -1), model->GetVertexPositions()), true);
-    ASSERT_EQ(IsPositionContainedInVector(Vector3(-1, -1, -1), model->GetVertexPositions()), true);
+    IsVector3ContainedInVector(1, 1, 1, vertexPositions);
+    IsVector3ContainedInVector(-1, 1, 1, vertexPositions);
+    IsVector3ContainedInVector(1, -1, 1, vertexPositions);
+    IsVector3ContainedInVector(-1, -1, 1, vertexPositions);
+    IsVector3ContainedInVector(1, 1, -1, vertexPositions);
+    IsVector3ContainedInVector(-1, 1, -1, vertexPositions);
+    IsVector3ContainedInVector(1, -1, -1, vertexPositions);
+    IsVector3ContainedInVector(-1, -1, -1, vertexPositions);
+
+    auto vertexUVs = model->GetVertexUVs();
+    auto firstLayer = std::vector<Vector2>();
+
+    for (auto itr = vertexUVs->begin(); itr != vertexUVs->end(); itr++)
+    {
+        firstLayer.push_back(itr->at(0));
+    }
+
+    // UV座標が正しいかどうかの判定
+    float block = 1.0f / 8.0f; // UV確認用のテクスチャの1ブロックの大きさ
+    IsVector2ContainedInVector(5.0f * block, 6.0f * block, &firstLayer);
+    IsVector2ContainedInVector(7.0f * block, 6.0f * block, &firstLayer);
+    IsVector2ContainedInVector(7.0f * block, 4.0f * block, &firstLayer);
+    IsVector2ContainedInVector(5.0f * block, 4.0f * block, &firstLayer);
+
+    IsVector2ContainedInVector(3.0f * block, 6.0f * block, &firstLayer);
+    IsVector2ContainedInVector(5.0f * block, 6.0f * block, &firstLayer);
+    IsVector2ContainedInVector(5.0f * block, 4.0f * block, &firstLayer);
+    IsVector2ContainedInVector(3.0f * block, 4.0f * block, &firstLayer);
+
+    IsVector2ContainedInVector(1.0f * block, 6.0f * block, &firstLayer);
+    IsVector2ContainedInVector(3.0f * block, 6.0f * block, &firstLayer);
+    IsVector2ContainedInVector(3.0f * block, 4.0f * block, &firstLayer);
+    IsVector2ContainedInVector(1.0f * block, 4.0f * block, &firstLayer);
+
+    IsVector2ContainedInVector(3.0f * block, 8.0f * block, &firstLayer);
+    IsVector2ContainedInVector(5.0f * block, 8.0f * block, &firstLayer);
+    IsVector2ContainedInVector(5.0f * block, 6.0f * block, &firstLayer);
+    IsVector2ContainedInVector(3.0f * block, 6.0f * block, &firstLayer);
+
+    IsVector2ContainedInVector(3.0f * block, 4.0f * block, &firstLayer);
+    IsVector2ContainedInVector(5.0f * block, 4.0f * block, &firstLayer);
+    IsVector2ContainedInVector(5.0f * block, 2.0f * block, &firstLayer);
+    IsVector2ContainedInVector(3.0f * block, 2.0f * block, &firstLayer);
+
+    IsVector2ContainedInVector(3.0f * block, 2.0f * block, &firstLayer);
+    IsVector2ContainedInVector(5.0f * block, 2.0f * block, &firstLayer);
+    IsVector2ContainedInVector(5.0f * block, 0.0f * block, &firstLayer);
+    IsVector2ContainedInVector(3.0f * block, 0.0f * block, &firstLayer);
+
+    // ASSERT_EQ(IsValueContainedInVector(Vector2(block * 5.0f, block * 7.0f), model->GetVertexUVs()), true);
 }

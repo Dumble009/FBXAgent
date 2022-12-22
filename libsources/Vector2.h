@@ -8,5 +8,7 @@ namespace fbxAgent
         float x, y;
         Vector2();
         Vector2(float _x, float _y);
+
+        bool operator==(const Vector2 &v) const;
     };
 }
