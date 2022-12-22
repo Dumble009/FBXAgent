@@ -3,6 +3,14 @@
 
 using namespace fbxAgent;
 
+bool IsPositionContainedInVector(const Vector3 &v, const std::vector<Vector3> *positions)
+{
+    for (auto itr = positions->begin(); itr != positions->end(); itr++)
+    {
+        }
+    return false;
+}
+
 // 頂点座標とインデックスデータを読み込むことが出来るかどうかを確かめる
 TEST(VertexLoadTest, BasicAssertions)
 {
@@ -25,18 +33,9 @@ TEST(VertexLoadTest, BasicAssertions)
 
     ASSERT_EQ(positionCount, 8);
 
+    auto vertexPositions = model->GetVertexPositions();
+
     int indexCount = model->GetVertexIndexCount();
 
     ASSERT_EQ(indexCount, 6 * 2 * 3);
-    /*
-    int positionCount = agent.GetVertexPositionCount();
-
-    // 箱の各角に頂点が一つずつ
-    ASSERT_EQ(positionCount, 8);
-
-    int indexCount = agent.GetVertexIndexCount();
-
-    // 6面が2つのポリゴンがあり、1つのポリゴンに3つの頂点がある
-    ASSERT_EQ(indexCount, 6 * 2 * 3);
-    */
 }

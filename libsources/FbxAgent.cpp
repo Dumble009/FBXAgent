@@ -178,7 +178,7 @@ if (ret != FbxAgentErrorCode::FBX_AGENT_SUCCESS)
         // TODO : UV座標をどういう風に展開すればVulkanで扱いやすい形に出来るのか考える。マッピングモードの違いにどう対処する？
         // 同じFbxMesh内の頂点は全て同じレイヤを持っているという前提を置いている
         int layerCount = mesh->GetLayerCount();
-        int startIndex = vertexUVs.size();
+        int startIndex = (int)vertexUVs.size();
         int vertexCount = mesh->GetPolygonVertexCount();
 
         for (int i = 0; i < vertexCount; i++)

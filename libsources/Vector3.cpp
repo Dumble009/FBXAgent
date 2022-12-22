@@ -1,5 +1,7 @@
 ﻿#include "Vector3.h"
 
+#include "internal/common/CommonUtil.h"
+
 namespace fbxAgent
 {
     Vector3::Vector3()
@@ -14,5 +16,12 @@ namespace fbxAgent
         x = _x;
         y = _y;
         z = _z;
+    }
+
+    bool Vector3::operator==(const Vector3 &v)
+    {
+        return IsFloatAlmostSame(v.x, this->x) &&
+               IsFloatAlmostSame(v.y, this->y) &&
+               IsFloatAlmostSame(v.z, this->z);
     }
 }
