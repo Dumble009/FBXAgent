@@ -31,14 +31,113 @@ namespace fbxAgent
             return FbxAgentErrorCode::FBX_AGENT_SUCCESS;
         }
 
+        FbxAgentErrorCode ModelLoader::LoadVertexUVs(const fbxsdk::FbxMesh *fbxMesh, std::vector<std::vector<Vector2>> *vertexUVs)
+        {
+            // メッシュに含まれるポリゴンの頂点の数だけUV情報を取り出す。
+            // 同じメッシュ内の同一頂点は全て同じだけのレイヤを持っているという仮定を置いている。
+            int vertexCount = fbxMesh->GetPolygonVertexCount();
+            for (int i = 0; i < vertexCount; i++)
+            {
+                vertexUVs->push_back(std::vector<Vector2>());
+            }
+
+            int layerCount = fbxMesh->GetLayerCount();
+
+            for (int layerIdx = 0; layerIdx < layerCount; layerIdx++)
+            {
+                // メッシュに含まれるレイヤを見ていき、UV情報を持つレイヤを見つけたらUV情報を抽出する
+                auto layer = fbxMesh->GetLayer(layerIdx);
+                auto elem = layer->GetUVs();
+                if (elem == nullptr)
+                {
+                    continue;
+                }
+
+                int uvArraySize = elem->GetDirectArray().GetCount();
+                int indexSize = elem->GetIndexArray().GetCount();
+                int size = std::max(uvArraySize, indexSize); // マッピングの仕方によってUV情報の数が異なる
+
+                std::vector<Vector2> uvs = std::vector<Vector2>();
+
+                auto refMode = elem->GetReferenceMode();
+
+                for (int i = 0; i < size; i++)
+                {
+                    fbxsdk::FbxVector2 uv;
+
+                    // UV情報の参照の仕方には、直接アクセスするものとインデックスバッファを使用するものがある
+                    // ここでいうインデックスは頂点インデックスとは別物
+                    if (refMode == fbxsdk::FbxLayerElement::eDirect)
+                    {
+                        uv = elem->GetDirectArray().GetAt(i);
+                    }
+                    else
+                    {
+                        int index = elem->GetIndexArray().GetAt(i);
+                        uv = elem->GetDirectArray().GetAt(index);
+                    }
+
+                    float x = (float)uv[0];
+                    float y = (float)uv[1];
+                    uvs.emplace_back(x, y);
+                }
+
+                std::vector<Vector2> res;
+
+                auto mapMode = elem->GetMappingMode();
+                if (mapMode == fbxsdk::FbxLayerElement::EMappingMode::eByPolygonVertex)
+                {
+                    res = uvs; // uv情報がポリゴンの頂点毎に割り当てられている場合はそのまま結果として使える。
+                }
+                else
+                {
+                    // uv情報がコントロールポイント毎に割り当てられている場合は、ポリゴンの頂点毎に振りなおす必要がある
+                    auto vertexIndices = std::vector<int>();
+                    auto ret = LoadVertexIndices(fbxMesh, &vertexIndices);
+
+                    for (auto index : vertexIndices)
+                    {
+                        // uvs[i]にはi番目のコントロールポイントのUV情報が含まれている。
+                        // これをポリゴンの頂点毎に振りなおしたいので、インデックスバッファに含まれる各インデックスに対応するUV値を取得している
+                        res.push_back(uvs[index]);
+                    }
+                }
+
+                for (int i = 0; i < vertexCount; i++)
+                {
+                    (*vertexUVs)[i].push_back(res[i]);
+                }
+            }
+
+            return FbxAgentErrorCode::FBX_AGENT_SUCCESS;
+        }
+
         FbxAgentErrorCode ModelLoader::LoadModel(const fbxsdk::FbxMesh *fbxMesh, fbxAgent::Model *resultModel)
         {
             std::vector<Vector3> vertexPositions = std::vector<Vector3>();
             std::vector<int> vertexIndices = std::vector<int>();
             std::vector<std::vector<Vector2>> vertexUVs = std::vector<std::vector<Vector2>>();
 
-            LoadVertexPositions(fbxMesh, &vertexPositions);
-            LoadVertexIndices(fbxMesh, &vertexIndices);
+            auto ret = LoadVertexPositions(fbxMesh, &vertexPositions);
+
+            if (ret != FbxAgentErrorCode::FBX_AGENT_SUCCESS)
+            {
+                return ret;
+            }
+
+            ret = LoadVertexIndices(fbxMesh, &vertexIndices);
+
+            if (ret != FbxAgentErrorCode::FBX_AGENT_SUCCESS)
+            {
+                return ret;
+            }
+
+            ret = LoadVertexUVs(fbxMesh, &vertexUVs);
+
+            if (ret != FbxAgentErrorCode::FBX_AGENT_SUCCESS)
+            {
+                return ret;
+            }
 
             *resultModel = Model(vertexPositions, vertexIndices, vertexUVs);
 

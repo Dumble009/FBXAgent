@@ -16,6 +16,7 @@ namespace fbxAgent
         private:
             static FbxAgentErrorCode LoadVertexPositions(const fbxsdk::FbxMesh *fbxMesh, std::vector<Vector3> *vertexPositions);
             static FbxAgentErrorCode LoadVertexIndices(const fbxsdk::FbxMesh *fbxMesh, std::vector<int> *vertexIndices);
+            static FbxAgentErrorCode LoadVertexUVs(const fbxsdk::FbxMesh *fbxMesh, std::vector<std::vector<Vector2>> *vertexUVs);
 
         public:
             static FbxAgentErrorCode LoadModel(const fbxsdk::FbxMesh *fbxMesh, fbxAgent::Model *resultModel);
