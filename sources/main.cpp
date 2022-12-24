@@ -1,7 +1,11 @@
 ﻿#include <iostream>
+#include <chrono>
+
 #include "FbxAgent.h"
 
 using namespace fbxAgent;
+
+#define FILE_NAME "./assets/vikingroom.fbx"
 
 int main(void)
 {
@@ -21,7 +25,14 @@ int main(void)
         return 1;
     }
 
-    ret = agent.Load("./assets/vikingroom.fbx");
+    auto start = std::chrono::system_clock::now();
+    std::cout << "load start : " << FILE_NAME << std::endl;
+
+    ret = agent.Load(FILE_NAME);
+
+    auto end = std::chrono::system_clock::now();
+    double elapsed = static_cast<double>(std::chrono::duration_cast<std::chrono::microseconds>(end - start).count() / 1000.0);
+    std::cout << "load finish : " << elapsed << "[ms]" << std::endl;
 
     if (ret != FbxAgentErrorCode::FBX_AGENT_SUCCESS)
     {
