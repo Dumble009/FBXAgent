@@ -127,18 +127,6 @@ namespace fbxAgent
             models.push_back(Model());
 
             internal::ModelLoader::LoadModel(mesh, &(models.back()));
-
-            /*auto ret = LoadVertexPosition(mesh);
-if (ret != FbxAgentErrorCode::FBX_AGENT_SUCCESS)
-{
-    return ret;
-}
-
-ret = LoadVertexIndices(mesh);
-if (ret != FbxAgentErrorCode::FBX_AGENT_SUCCESS)
-{
-    return ret;
-}*/
         }
 
         return FbxAgentErrorCode::FBX_AGENT_SUCCESS;

@@ -13,6 +13,8 @@ int main(void)
 
     ret = agent.Init();
 
+    std::cout << "initialize finished!!" << std::endl;
+
     if (ret != FbxAgentErrorCode::FBX_AGENT_SUCCESS)
     {
         std::cerr << "agent.Init failed error code : " << (int)ret << std::endl;
