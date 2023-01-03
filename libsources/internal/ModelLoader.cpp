@@ -139,7 +139,47 @@ namespace fbxAgent
                 return ret;
             }
 
+            ret = Triangulate(fbxMesh, &vertexIndices, &vertexUVs);
+
+            if (ret != FbxAgentErrorCode::FBX_AGENT_SUCCESS)
+            {
+                return ret;
+            }
+
             *resultModel = Model(vertexPositions, vertexIndices, vertexUVs);
+
+            return FbxAgentErrorCode::FBX_AGENT_SUCCESS;
+        }
+
+        FbxAgentErrorCode ModelLoader::Triangulate(const fbxsdk::FbxMesh *fbxMesh, std::vector<int> *vertexIndices, std::vector<std::vector<Vector2>> *vertexUVs)
+        {
+            // TODO : ここはmoveに置き換えた方がいいかも
+            auto org_vertexIndices = *vertexIndices;
+            auto org_vertexUVs = *vertexUVs;
+
+            vertexIndices->clear();
+            vertexUVs->clear();
+
+            int polygonCount = fbxMesh->GetPolygonCount();
+
+            for (int i = 0; i < polygonCount; i++)
+            {
+                int startIndex = fbxMesh->GetPolygonVertexIndex(i);
+                int vertexCount = fbxMesh->GetPolygonSize(i);
+
+                // [0,1,2,3,4]の五角形を[0,1,2,0,2,3,0,3,4]の三角形3つに変換するような処理
+                for (int j = startIndex + 1; j < startIndex + vertexCount - 1; j++)
+                {
+                    vertexIndices->push_back(org_vertexIndices[startIndex]);
+                    vertexUVs->push_back(org_vertexUVs[startIndex]);
+
+                    vertexIndices->push_back(org_vertexIndices[j]);
+                    vertexUVs->push_back(org_vertexUVs[j]);
+
+                    vertexIndices->push_back(org_vertexIndices[j + 1]);
+                    vertexUVs->push_back(org_vertexUVs[j + 1]);
+                }
+            }
 
             return FbxAgentErrorCode::FBX_AGENT_SUCCESS;
         }
