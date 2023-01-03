@@ -153,12 +153,11 @@ namespace fbxAgent
 
         FbxAgentErrorCode ModelLoader::Triangulate(const fbxsdk::FbxMesh *fbxMesh, std::vector<int> *vertexIndices, std::vector<std::vector<Vector2>> *vertexUVs)
         {
-            // TODO : ここはmoveに置き換えた方がいいかも
-            auto org_vertexIndices = *vertexIndices;
-            auto org_vertexUVs = *vertexUVs;
+            auto org_vertexIndices = std::move(*vertexIndices);
+            auto org_vertexUVs = std::move(*vertexUVs);
 
-            vertexIndices->clear();
-            vertexUVs->clear();
+            *vertexIndices = std::vector<int>();
+            *vertexUVs = std::vector<std::vector<Vector2>>();
 
             int polygonCount = fbxMesh->GetPolygonCount();
 
