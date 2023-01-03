@@ -103,7 +103,7 @@ namespace fbxAgent
         DEBUG_START("Triangulate", debugTool::DebugType::TIME);
         // ポリゴンを全て三角ポリゴンに変換する
         fbxsdk::FbxGeometryConverter geometryConverter(pFbxManager);
-        geometryConverter.Triangulate(pFbxScene, true);
+        // geometryConverter.Triangulate(pFbxScene, true);
         DEBUG_STOP("Triangulate");
 
         DEBUG_START("LoadVertices", debugTool::DebugType::TIME);
