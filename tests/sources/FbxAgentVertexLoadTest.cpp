@@ -10,6 +10,7 @@
 
 using namespace fbxAgent;
 
+// 立方体の3Dモデルを読み込んで、頂点の数やUVが合っているかを確認する
 void LoadTestBody(const std::string &fileName)
 {
     FbxAgent agent = FbxAgent();
@@ -88,8 +89,14 @@ void LoadTestBody(const std::string &fileName)
     IsVector2ContainedInVector(3.0f * block, 0.0f * block, &firstLayer);
 }
 
-// 頂点座標とインデックスデータを読み込むことが出来るかどうかを確かめる
-TEST(VertexLoadTest, BasicAssertions)
+// 全ての面が三角形のモデルの頂点座標とインデックスデータを読み込むことが出来るかどうかを確かめる
+TEST(VertexLoadTest_Tri, BasicAssertions)
 {
     LoadTestBody("./assets/tri_box.fbx");
+}
+
+// 全ての面が四角形のモデルについても同様の事を確かめる
+TEST(VertexLoadTest_Quad, BasicAssertions)
+{
+    LoadTestBody("./assets/quad_box.fbx");
 }
