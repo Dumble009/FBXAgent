@@ -1,7 +1,12 @@
 ﻿#include <iostream>
+#include <chrono>
+
 #include "FbxAgent.h"
+#include "Debugger.h"
 
 using namespace fbxAgent;
+
+#define FILE_NAME "./assets/vikingroom.fbx"
 
 int main(void)
 {
@@ -21,7 +26,12 @@ int main(void)
         return 1;
     }
 
-    ret = agent.Load("./assets/vikingroom.fbx");
+    debugTool::Debugger::Start("root", debugTool::DebugType::TIME);
+    std::cout << "load start : " << FILE_NAME << std::endl;
+
+    ret = agent.Load(FILE_NAME);
+
+    std::cout << debugTool::Debugger::Stop("root") << std::endl;
 
     if (ret != FbxAgentErrorCode::FBX_AGENT_SUCCESS)
     {

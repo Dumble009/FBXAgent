@@ -19,7 +19,7 @@ TEST(FbxAgentLoad, BasicAssertions)
 
     agent.Init();
 
-    auto ret = agent.Load("./assets/box.fbx");
+    auto ret = agent.Load("./assets/tri_box.fbx");
 
     ASSERT_EQ(ret, fbxAgent::FbxAgentErrorCode::FBX_AGENT_SUCCESS) << "ret value is : " << (int)ret;
 }

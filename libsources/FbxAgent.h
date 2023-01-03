@@ -38,7 +38,7 @@ namespace fbxAgent
         FbxAgent();
         ~FbxAgent();
         FbxAgentErrorCode Init(); // 初期化処理。インスタンスを使用し始める前に初期化する必要がある。
-        FbxAgentErrorCode Load(std::string filePath);
+        FbxAgentErrorCode Load(const std::string &filePath);
 
         int GetVertexPositionCount();
         int GetVertexIndexCount();
