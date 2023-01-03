@@ -10,8 +10,8 @@
 
 using namespace fbxAgent;
 
-// 頂点座標とインデックスデータを読み込むことが出来るかどうかを確かめる
-TEST(VertexLoadTest, BasicAssertions)
+// 立方体の3Dモデルを読み込んで、頂点の数やUVが合っているかを確認する
+void LoadTestBody(const std::string &fileName)
 {
     FbxAgent agent = FbxAgent();
 
@@ -19,7 +19,7 @@ TEST(VertexLoadTest, BasicAssertions)
 
     ASSERT_EQ(ret, fbxAgent::FbxAgentErrorCode::FBX_AGENT_SUCCESS) << "ret value is : " << (int)ret;
 
-    ret = agent.Load("./assets/box.fbx");
+    ret = agent.Load(fileName);
 
     ASSERT_EQ(ret, fbxAgent::FbxAgentErrorCode::FBX_AGENT_SUCCESS) << "ret value is : " << (int)ret;
 
@@ -87,6 +87,16 @@ TEST(VertexLoadTest, BasicAssertions)
     IsVector2ContainedInVector(5.0f * block, 2.0f * block, &firstLayer);
     IsVector2ContainedInVector(5.0f * block, 0.0f * block, &firstLayer);
     IsVector2ContainedInVector(3.0f * block, 0.0f * block, &firstLayer);
+}
 
-    // ASSERT_EQ(IsValueContainedInVector(Vector2(block * 5.0f, block * 7.0f), model->GetVertexUVs()), true);
+// 全ての面が三角形のモデルの頂点座標とインデックスデータを読み込むことが出来るかどうかを確かめる
+TEST(VertexLoadTest_Tri, BasicAssertions)
+{
+    LoadTestBody("./assets/tri_box.fbx");
+}
+
+// 全ての面が四角形のモデルについても同様の事を確かめる
+TEST(VertexLoadTest_Quad, BasicAssertions)
+{
+    LoadTestBody("./assets/quad_box.fbx");
 }

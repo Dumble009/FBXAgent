@@ -47,7 +47,7 @@ namespace fbxAgent
         return FbxAgentErrorCode::FBX_AGENT_SUCCESS;
     }
 
-    FbxAgentErrorCode FbxAgent::Load(std::string filePath)
+    FbxAgentErrorCode FbxAgent::Load(const std::string &filePath)
     {
         if (pFbxManager == nullptr)
         {
@@ -103,7 +103,7 @@ namespace fbxAgent
         DEBUG_START("Triangulate", debugTool::DebugType::TIME);
         // ポリゴンを全て三角ポリゴンに変換する
         fbxsdk::FbxGeometryConverter geometryConverter(pFbxManager);
-        geometryConverter.Triangulate(pFbxScene, true);
+        // geometryConverter.Triangulate(pFbxScene, true);
         DEBUG_STOP("Triangulate");
 
         DEBUG_START("LoadVertices", debugTool::DebugType::TIME);
@@ -155,106 +155,6 @@ namespace fbxAgent
             models.push_back(Model());
 
             internal::ModelLoader::LoadModel(mesh, &(models.back()));
-        }
-
-        return FbxAgentErrorCode::FBX_AGENT_SUCCESS;
-    }
-
-    FbxAgentErrorCode FbxAgent::LoadVertexPosition(const fbxsdk::FbxMesh *mesh)
-    {
-        vertexPositonCount += mesh->GetControlPointsCount();
-
-        for (int i = 0; i < vertexPositonCount; i++)
-        {
-            auto point = mesh->GetControlPointAt(i);
-            vertexPositions.push_back(
-                Vector3((float)point[0], (float)point[1], (float)point[2]));
-        }
-
-        return FbxAgentErrorCode::FBX_AGENT_SUCCESS;
-    }
-
-    FbxAgentErrorCode FbxAgent::LoadVertexIndices(const fbxsdk::FbxMesh *mesh)
-    {
-        vertexIndexCount += mesh->GetPolygonVertexCount();
-
-        auto vertices = mesh->GetPolygonVertices();
-
-        for (int i = 0; i < vertexIndexCount; i++)
-        {
-            vertexIndices.push_back(vertices[i]);
-        }
-
-        return FbxAgentErrorCode::FBX_AGENT_SUCCESS;
-    }
-
-    // LoadVertexIndicesの後に呼び出されることを前提としている
-    FbxAgentErrorCode FbxAgent::LoadVertexUVs(const fbxsdk::FbxMesh *mesh)
-    {
-        // TODO : UV座標をどういう風に展開すればVulkanで扱いやすい形に出来るのか考える。マッピングモードの違いにどう対処する？
-        // 同じFbxMesh内の頂点は全て同じレイヤを持っているという前提を置いている
-        int layerCount = mesh->GetLayerCount();
-        int startIndex = (int)vertexUVs.size();
-        int vertexCount = mesh->GetPolygonVertexCount();
-
-        for (int i = 0; i < vertexCount; i++)
-        {
-            vertexUVs.push_back(std::vector<Vector2>());
-        }
-
-        for (int layerIdx = 0; layerIdx < layerCount; layerIdx++)
-        {
-            auto layer = mesh->GetLayer(layerIdx);
-            auto elem = layer->GetUVs();
-            if (elem == nullptr)
-            {
-                continue;
-            }
-
-            int uvArraySize = elem->GetDirectArray().GetCount();
-            int indexSize = elem->GetIndexArray().GetCount();
-            int size = std::max(uvArraySize, indexSize); // マッピングの仕方によってUV情報の数が異なる
-
-            std::vector<Vector2> uvs = std::vector<Vector2>();
-
-            auto refMode = elem->GetReferenceMode();
-
-            for (int i = 0; i < size; i++)
-            {
-                fbxsdk::FbxVector2 uv;
-                // UV情報の参照の仕方には、直接アクセスするものとインデックスバッファを使用するものがある
-                // ここでいうインデックスは頂点インデックスとは別物
-                if (refMode == fbxsdk::FbxLayerElement::eDirect)
-                {
-                    uv = elem->GetDirectArray().GetAt(i);
-                }
-                else
-                {
-                    int index = elem->GetIndexArray().GetAt(i);
-                    uv = elem->GetDirectArray().GetAt(index);
-                }
-
-                float x = (float)uv[0];
-                float y = (float)uv[1];
-                uvs.emplace_back(x, y);
-            }
-
-            std::vector<Vector2> res;
-
-            auto mapMode = elem->GetMappingMode();
-            if (mapMode == fbxsdk::FbxLayerElement::EMappingMode::eByPolygonVertex)
-            {
-                res = uvs; // uv情報がポリゴンの頂点毎に割り当てられている場合はそのまま結果として使える。
-            }
-            else
-            {
-                // uv情報がコントロールポイント毎に割り当てられている場合は、ポリゴンの頂点毎に振りなおす必要がある
-                for (int i = startIndex; i < startIndex + vertexCount; i++)
-                {
-                    int vertexIndex = vertexIndices[i];
-                    res.push_back(uvs[vertexIndex]);
-                }
-            }
         }
 
         return FbxAgentErrorCode::FBX_AGENT_SUCCESS;
