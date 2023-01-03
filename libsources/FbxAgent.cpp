@@ -8,6 +8,18 @@
 
 #define FBXSDK_NEW_API
 
+// #define DEBUGGER_ON
+
+#ifdef DEBUGGER_ON
+#define DEBUG_START(name, type) debugTool::Debugger::Start(name, type)
+
+#define DEBUG_STOP(name) std::cout << debugTool::Debugger::Stop(name) << std::endl
+#else
+#define DEBUG_START(name, type)
+
+#define DEBUG_STOP(name)
+#endif
+
 namespace fbxAgent
 {
     FbxAgent::FbxAgent()
@@ -47,56 +59,56 @@ namespace fbxAgent
             pFbxImporter->Destroy();
         }
 
-        debugTool::Debugger::Start("create importer", debugTool::DebugType::TIME);
+        DEBUG_START("create importer", debugTool::DebugType::TIME);
         pFbxImporter = fbxsdk::FbxImporter::Create(pFbxManager, "importer");
         if (pFbxImporter == nullptr)
         {
             return FbxAgentErrorCode::FBX_AGENT_ERROR_FAILED_TO_CREATE_FBX_IMPORETR;
         }
-        std::cout << debugTool::Debugger::Stop("create importer") << std::endl;
+        DEBUG_STOP("create importer");
 
         if (pFbxScene != nullptr)
         {
             pFbxScene->Destroy();
         }
 
-        debugTool::Debugger::Start("create scene", debugTool::DebugType::TIME);
+        DEBUG_START("create scene", debugTool::DebugType::TIME);
         pFbxScene = fbxsdk::FbxScene::Create(pFbxManager, "scene");
         if (pFbxScene == nullptr)
         {
             return FbxAgentErrorCode::FBX_AGENT_ERROR_FAILED_TO_CREATE_FBX_SCENE;
         }
-        std::cout << debugTool::Debugger::Stop("create scene") << std::endl;
+        DEBUG_STOP("create scene");
 
-        debugTool::Debugger::Start("file load", debugTool::DebugType::TIME);
+        DEBUG_START("file load", debugTool::DebugType::TIME);
         // ファイルをImporterに読み込む
         if (!pFbxImporter->Initialize(filePath.c_str()))
         {
             return FbxAgentErrorCode::FBX_AGENT_ERROR_FAILED_TO_LOAD_FILE;
         }
-        std::cout << debugTool::Debugger::Stop("file load") << std::endl;
+        DEBUG_STOP("file load");
 
-        debugTool::Debugger::Start("import", debugTool::DebugType::TIME);
+        DEBUG_START("import", debugTool::DebugType::TIME);
         // 読み込んだファイルを頂点バッファやマテリアルなどの要素ごとに分解してSceneに展開する
         if (!pFbxImporter->Import(pFbxScene))
         {
             return FbxAgentErrorCode::FBX_AGENT_ERROR_FAILED_TO_IMPORT;
         }
-        std::cout << debugTool::Debugger::Stop("import") << std::endl;
+        DEBUG_STOP("import");
 
         // 読み込み完了後はImporterは不要なので削除しておく
         pFbxImporter->Destroy();
         pFbxImporter = nullptr;
 
-        debugTool::Debugger::Start("Triangulate", debugTool::DebugType::TIME);
+        DEBUG_START("Triangulate", debugTool::DebugType::TIME);
         // ポリゴンを全て三角ポリゴンに変換する
         fbxsdk::FbxGeometryConverter geometryConverter(pFbxManager);
         geometryConverter.Triangulate(pFbxScene, true);
-        std::cout << debugTool::Debugger::Stop("Triangulate") << std::endl;
+        DEBUG_STOP("Triangulate");
 
-        debugTool::Debugger::Start("LoadVertices", debugTool::DebugType::TIME);
+        DEBUG_START("LoadVertices", debugTool::DebugType::TIME);
         auto ret = LoadVertices(pFbxScene);
-        std::cout << debugTool::Debugger::Stop("LoadVertices") << std::endl;
+        DEBUG_STOP("LoadVertices");
 
         return ret;
     }
