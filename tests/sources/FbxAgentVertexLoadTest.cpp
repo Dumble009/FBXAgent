@@ -10,8 +10,7 @@
 
 using namespace fbxAgent;
 
-// 頂点座標とインデックスデータを読み込むことが出来るかどうかを確かめる
-TEST(VertexLoadTest, BasicAssertions)
+void LoadTestBody(const std::string &fileName)
 {
     FbxAgent agent = FbxAgent();
 
@@ -19,7 +18,7 @@ TEST(VertexLoadTest, BasicAssertions)
 
     ASSERT_EQ(ret, fbxAgent::FbxAgentErrorCode::FBX_AGENT_SUCCESS) << "ret value is : " << (int)ret;
 
-    ret = agent.Load("./assets/box.fbx");
+    ret = agent.Load(fileName);
 
     ASSERT_EQ(ret, fbxAgent::FbxAgentErrorCode::FBX_AGENT_SUCCESS) << "ret value is : " << (int)ret;
 
@@ -87,6 +86,10 @@ TEST(VertexLoadTest, BasicAssertions)
     IsVector2ContainedInVector(5.0f * block, 2.0f * block, &firstLayer);
     IsVector2ContainedInVector(5.0f * block, 0.0f * block, &firstLayer);
     IsVector2ContainedInVector(3.0f * block, 0.0f * block, &firstLayer);
+}
 
-    // ASSERT_EQ(IsValueContainedInVector(Vector2(block * 5.0f, block * 7.0f), model->GetVertexUVs()), true);
+// 頂点座標とインデックスデータを読み込むことが出来るかどうかを確かめる
+TEST(VertexLoadTest, BasicAssertions)
+{
+    LoadTestBody("./assets/tri_box.fbx");
 }

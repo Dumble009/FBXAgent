@@ -47,7 +47,7 @@ namespace fbxAgent
         return FbxAgentErrorCode::FBX_AGENT_SUCCESS;
     }
 
-    FbxAgentErrorCode FbxAgent::Load(std::string filePath)
+    FbxAgentErrorCode FbxAgent::Load(const std::string &filePath)
     {
         if (pFbxManager == nullptr)
         {
