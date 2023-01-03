@@ -3,6 +3,9 @@
 // internelなヘッダはユーザに見せないので、実装部でインクルードする
 #include "internal/ModelLoader.h"
 
+#include "Debugger.h"
+#include <iostream>
+
 #define FBXSDK_NEW_API
 
 namespace fbxAgent
@@ -44,43 +47,56 @@ namespace fbxAgent
             pFbxImporter->Destroy();
         }
 
+        debugTool::Debugger::Start("create importer", debugTool::DebugType::TIME);
         pFbxImporter = fbxsdk::FbxImporter::Create(pFbxManager, "importer");
         if (pFbxImporter == nullptr)
         {
             return FbxAgentErrorCode::FBX_AGENT_ERROR_FAILED_TO_CREATE_FBX_IMPORETR;
         }
+        std::cout << debugTool::Debugger::Stop("create importer") << std::endl;
 
         if (pFbxScene != nullptr)
         {
             pFbxScene->Destroy();
         }
+
+        debugTool::Debugger::Start("create scene", debugTool::DebugType::TIME);
         pFbxScene = fbxsdk::FbxScene::Create(pFbxManager, "scene");
         if (pFbxScene == nullptr)
         {
             return FbxAgentErrorCode::FBX_AGENT_ERROR_FAILED_TO_CREATE_FBX_SCENE;
         }
+        std::cout << debugTool::Debugger::Stop("create scene") << std::endl;
 
+        debugTool::Debugger::Start("file load", debugTool::DebugType::TIME);
         // ファイルをImporterに読み込む
         if (!pFbxImporter->Initialize(filePath.c_str()))
         {
             return FbxAgentErrorCode::FBX_AGENT_ERROR_FAILED_TO_LOAD_FILE;
         }
+        std::cout << debugTool::Debugger::Stop("file load") << std::endl;
 
+        debugTool::Debugger::Start("import", debugTool::DebugType::TIME);
         // 読み込んだファイルを頂点バッファやマテリアルなどの要素ごとに分解してSceneに展開する
         if (!pFbxImporter->Import(pFbxScene))
         {
             return FbxAgentErrorCode::FBX_AGENT_ERROR_FAILED_TO_IMPORT;
         }
+        std::cout << debugTool::Debugger::Stop("import") << std::endl;
 
         // 読み込み完了後はImporterは不要なので削除しておく
         pFbxImporter->Destroy();
         pFbxImporter = nullptr;
 
+        debugTool::Debugger::Start("Triangulate", debugTool::DebugType::TIME);
         // ポリゴンを全て三角ポリゴンに変換する
-        FbxGeometryConverter geometryConverter(pFbxManager);
+        fbxsdk::FbxGeometryConverter geometryConverter(pFbxManager);
         geometryConverter.Triangulate(pFbxScene, true);
+        std::cout << debugTool::Debugger::Stop("Triangulate") << std::endl;
 
+        debugTool::Debugger::Start("LoadVertices", debugTool::DebugType::TIME);
         auto ret = LoadVertices(pFbxScene);
+        std::cout << debugTool::Debugger::Stop("LoadVertices") << std::endl;
 
         return ret;
     }
@@ -223,7 +239,8 @@ namespace fbxAgent
                 // uv情報がコントロールポイント毎に割り当てられている場合は、ポリゴンの頂点毎に振りなおす必要がある
                 for (int i = startIndex; i < startIndex + vertexCount; i++)
                 {
-                    int vertexIndex = vertexIndices[i]; //
+                    int vertexIndex = vertexIndices[i];
+                    res.push_back(uvs[vertexIndex]);
                 }
             }
         }

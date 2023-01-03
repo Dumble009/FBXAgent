@@ -17,14 +17,17 @@ file(GLOB_RECURSE EXE_SOURCES LIST_DIRECTORIES false RELATIVE "${CMAKE_SOURCE_DI
 add_library(${LibraryName} ${LIB_SOURCES})
 add_executable(${ExecutableName} ${EXE_SOURCES})
 
-target_include_directories(${LibraryName} PUBLIC "${CMAKE_SOURCE_DIR}/libsources" "C:/Program Files/Autodesk/FBX/FBX SDK/2020.3.2/include")
-target_link_directories(${LibraryName} PUBLIC "C:/Program Files/Autodesk/FBX/FBX SDK/2020.3.2/lib/vs2019/x64/debug")
-target_link_libraries(${LibraryName} libfbxsdk)
+target_include_directories(${LibraryName} PUBLIC "${CMAKE_SOURCE_DIR}/libsources" "C:/Program Files/Autodesk/FBX/FBX SDK/2020.3.2/include" "C:/MyLib/DebugTool/include")
+target_link_directories(${LibraryName} PUBLIC "C:/Program Files/Autodesk/FBX/FBX SDK/2020.3.2/lib/vs2019/x64/debug" "C:/MyLib/DebugTool/lib")
+target_link_libraries(${LibraryName} libfbxsdk DebugTool)
 
-target_include_directories(${ExecutableName} PUBLIC "${CMAKE_SOURCE_DIR}/sources" "${CMAKE_SOURCE_DIR}/libsources" "C:/Program Files/Autodesk/FBX/FBX SDK/2020.3.2/include")
-target_link_directories(${ExecutableName} PUBLIC "C:/Program Files/Autodesk/FBX/FBX SDK/2020.3.2/lib/vs2019/x64/debug" "${CMAKE_SOURCE_DIR}/build")
-target_link_libraries(${ExecutableName} libfbxsdk FbxAgent)
+target_include_directories(${ExecutableName} PUBLIC "${CMAKE_SOURCE_DIR}/sources" "${CMAKE_SOURCE_DIR}/libsources" "C:/Program Files/Autodesk/FBX/FBX SDK/2020.3.2/include" "C:/MyLib/DebugTool/include")
+target_link_directories(${ExecutableName} PUBLIC "C:/Program Files/Autodesk/FBX/FBX SDK/2020.3.2/lib/vs2019/x64/debug" "${CMAKE_SOURCE_DIR}/build" "C:/MyLib/DebugTool/lib")
+target_link_libraries(${ExecutableName} libfbxsdk FbxAgent DebugTool)
 
 set(CPACK_PROJECT_NAME ${PROJECT_NAME})
 set(CPACK_PROJECT_VERSION ${PROJECT_VERSION})
+
+set_target_properties(${LibraryName} PROPERTIES COMPILE_PDB_NAME_DEBUG ${LibraryName} COMPILE_PDB_NAME_RELEASE ${LibraryName})
+
 include(CPack)

@@ -2,6 +2,7 @@
 #include <chrono>
 
 #include "FbxAgent.h"
+#include "Debugger.h"
 
 using namespace fbxAgent;
 
@@ -25,14 +26,12 @@ int main(void)
         return 1;
     }
 
-    auto start = std::chrono::system_clock::now();
+    debugTool::Debugger::Start("root", debugTool::DebugType::TIME);
     std::cout << "load start : " << FILE_NAME << std::endl;
 
     ret = agent.Load(FILE_NAME);
 
-    auto end = std::chrono::system_clock::now();
-    double elapsed = static_cast<double>(std::chrono::duration_cast<std::chrono::microseconds>(end - start).count() / 1000.0);
-    std::cout << "load finish : " << elapsed << "[ms]" << std::endl;
+    std::cout << debugTool::Debugger::Stop("root") << std::endl;
 
     if (ret != FbxAgentErrorCode::FBX_AGENT_SUCCESS)
     {
