@@ -4,7 +4,7 @@ namespace fbxAgent
 {
     namespace internal
     {
-        FbxAgentErrorCode ModelLoader::LoadVertexPositions(const fbxsdk::FbxMesh *fbxMesh, std::vector<Vector3> *vertexPositions)
+        FbxAgentErrorCode ModelLoader::LoadVertexPositions(const fbxsdk::FbxMesh *fbxMesh, std::vector<math::Vector3> *vertexPositions)
         {
             int vertexPositionCount = fbxMesh->GetControlPointsCount();
 
@@ -12,7 +12,7 @@ namespace fbxAgent
             {
                 auto point = fbxMesh->GetControlPointAt(i);
                 vertexPositions->push_back(
-                    Vector3((float)point[0], (float)point[1], (float)point[2]));
+                    math::Vector3((float)point[0], (float)point[1], (float)point[2]));
             }
 
             return FbxAgentErrorCode::FBX_AGENT_SUCCESS;
@@ -31,14 +31,14 @@ namespace fbxAgent
             return FbxAgentErrorCode::FBX_AGENT_SUCCESS;
         }
 
-        FbxAgentErrorCode ModelLoader::LoadVertexUVs(const fbxsdk::FbxMesh *fbxMesh, std::vector<std::vector<Vector2>> *vertexUVs)
+        FbxAgentErrorCode ModelLoader::LoadVertexUVs(const fbxsdk::FbxMesh *fbxMesh, std::vector<std::vector<math::Vector2>> *vertexUVs)
         {
             // メッシュに含まれるポリゴンの頂点の数だけUV情報を取り出す。
             // 同じメッシュ内の同一頂点は全て同じだけのレイヤを持っているという仮定を置いている。
             int vertexCount = fbxMesh->GetPolygonVertexCount();
             for (int i = 0; i < vertexCount; i++)
             {
-                vertexUVs->push_back(std::vector<Vector2>());
+                vertexUVs->push_back(std::vector<math::Vector2>());
             }
 
             int layerCount = fbxMesh->GetLayerCount();
@@ -57,7 +57,7 @@ namespace fbxAgent
                 int indexSize = elem->GetIndexArray().GetCount();
                 int size = std::max(uvArraySize, indexSize); // マッピングの仕方によってUV情報の数が異なる
 
-                std::vector<Vector2> uvs = std::vector<Vector2>();
+                std::vector<math::Vector2> uvs = std::vector<math::Vector2>();
 
                 auto refMode = elem->GetReferenceMode();
 
@@ -82,7 +82,7 @@ namespace fbxAgent
                     uvs.emplace_back(x, y);
                 }
 
-                std::vector<Vector2> res;
+                std::vector<math::Vector2> res;
 
                 auto mapMode = elem->GetMappingMode();
                 if (mapMode == fbxsdk::FbxLayerElement::EMappingMode::eByPolygonVertex)
@@ -114,9 +114,9 @@ namespace fbxAgent
 
         FbxAgentErrorCode ModelLoader::LoadModel(const fbxsdk::FbxMesh *fbxMesh, fbxAgent::Model *resultModel)
         {
-            std::vector<Vector3> vertexPositions = std::vector<Vector3>();
+            std::vector<math::Vector3> vertexPositions = std::vector<math::Vector3>();
             std::vector<int> vertexIndices = std::vector<int>();
-            std::vector<std::vector<Vector2>> vertexUVs = std::vector<std::vector<Vector2>>();
+            std::vector<std::vector<math::Vector2>> vertexUVs = std::vector<std::vector<math::Vector2>>();
 
             auto ret = LoadVertexPositions(fbxMesh, &vertexPositions);
 
@@ -151,13 +151,13 @@ namespace fbxAgent
             return FbxAgentErrorCode::FBX_AGENT_SUCCESS;
         }
 
-        FbxAgentErrorCode ModelLoader::Triangulate(const fbxsdk::FbxMesh *fbxMesh, std::vector<int> *vertexIndices, std::vector<std::vector<Vector2>> *vertexUVs)
+        FbxAgentErrorCode ModelLoader::Triangulate(const fbxsdk::FbxMesh *fbxMesh, std::vector<int> *vertexIndices, std::vector<std::vector<math::Vector2>> *vertexUVs)
         {
             auto org_vertexIndices = std::move(*vertexIndices);
             auto org_vertexUVs = std::move(*vertexUVs);
 
             *vertexIndices = std::vector<int>();
-            *vertexUVs = std::vector<std::vector<Vector2>>();
+            *vertexUVs = std::vector<std::vector<math::Vector2>>();
 
             int polygonCount = fbxMesh->GetPolygonCount();
 

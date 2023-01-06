@@ -5,8 +5,6 @@
 
 #define FBXSDK_SHARED
 #include <fbxsdk.h>
-#include "Vector3.h"
-#include "Vector2.h"
 #include "Model.h"
 #include "ErrorCodes.h"
 
@@ -18,14 +16,6 @@ namespace fbxAgent
         fbxsdk::FbxManager *pFbxManager;
         fbxsdk::FbxImporter *pFbxImporter;
         fbxsdk::FbxScene *pFbxScene;
-
-        int vertexPositonCount; // 頂点座標データの数
-        std::vector<Vector3> vertexPositions;
-
-        std::vector<std::vector<Vector2>> vertexUVs; // [vertexIndexCount][vertexUVLayerCount]の配列
-
-        int vertexIndexCount; // 頂点インデックスデータの数
-        std::vector<int> vertexIndices;
 
         std::vector<Model> models; // fbxファイルから抽出したモデルのリスト
 

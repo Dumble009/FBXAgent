@@ -4,16 +4,16 @@ namespace fbxAgent
 {
     Model::Model()
     {
-        vertexPositions = std::vector<Vector3>();
+        vertexPositions = std::vector<math::Vector3>();
         vertexPositonCount = 0;
 
         vertexIndices = std::vector<int>();
         vertexIndexCount = 0;
 
-        vertexUVs = std::vector<std::vector<Vector2>>();
+        vertexUVs = std::vector<std::vector<math::Vector2>>();
     }
 
-    Model::Model(std::vector<Vector3> _vertexPositions, std::vector<int> _vertexIndices, std::vector<std::vector<Vector2>> _vertexUVs)
+    Model::Model(std::vector<math::Vector3> _vertexPositions, std::vector<int> _vertexIndices, std::vector<std::vector<math::Vector2>> _vertexUVs)
     {
         vertexPositions = _vertexPositions;
         vertexPositonCount = (int)vertexPositions.size();
@@ -29,7 +29,7 @@ namespace fbxAgent
         return vertexPositonCount;
     }
 
-    std::vector<Vector3> *Model::GetVertexPositions()
+    std::vector<math::Vector3> *Model::GetVertexPositions()
     {
         return &vertexPositions;
     }
@@ -44,7 +44,7 @@ namespace fbxAgent
         return &vertexIndices;
     }
 
-    std::vector<std::vector<Vector2>> *Model::GetVertexUVs()
+    std::vector<std::vector<math::Vector2>> *Model::GetVertexUVs()
     {
         return &vertexUVs;
     }

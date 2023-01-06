@@ -27,14 +27,6 @@ namespace fbxAgent
         pFbxManager = nullptr;
         pFbxImporter = nullptr;
         pFbxScene = nullptr;
-
-        vertexPositonCount = 0;
-        vertexPositions = std::vector<Vector3>();
-
-        vertexIndexCount = 0;
-        vertexIndices = std::vector<int>();
-
-        vertexUVs = std::vector<std::vector<Vector2>>();
     }
 
     FbxAgentErrorCode FbxAgent::Init()
@@ -158,16 +150,6 @@ namespace fbxAgent
         }
 
         return FbxAgentErrorCode::FBX_AGENT_SUCCESS;
-    }
-
-    int FbxAgent::GetVertexPositionCount()
-    {
-        return vertexPositonCount;
-    }
-
-    int FbxAgent::GetVertexIndexCount()
-    {
-        return vertexIndexCount;
     }
 
     FbxAgentErrorCode FbxAgent::GetModelByIndex(int index, Model **model)
