@@ -20,9 +20,9 @@ file(GLOB_RECURSE TEST_SOURCES LIST_DIRECTORIES false RELATIVE "${CMAKE_SOURCE_D
 
 add_executable(${TestName} ${TEST_SOURCES})
 
-target_include_directories(${TestName} PUBLIC "${CMAKE_SOURCE_DIR}/libsources" "C:/Program Files/Autodesk/FBX/FBX SDK/2020.3.2/include")
-target_link_directories(${TestName} PUBLIC "C:/Program Files/Autodesk/FBX/FBX SDK/2020.3.2/lib/vs2019/x64/debug" "${CMAKE_SOURCE_DIR}/build")
-target_link_libraries(${TestName} GTest::gtest_main libfbxsdk FbxAgent)
+target_include_directories(${TestName} PUBLIC "${CMAKE_SOURCE_DIR}/libsources" "C:/Program Files/Autodesk/FBX/FBX SDK/2020.3.2/include" "C:/MyLib/MathLib/include")
+target_link_directories(${TestName} PUBLIC "C:/Program Files/Autodesk/FBX/FBX SDK/2020.3.2/lib/vs2019/x64/debug" "${CMAKE_SOURCE_DIR}/build" "C:/MyLib/MathLib/lib")
+target_link_libraries(${TestName} GTest::gtest_main libfbxsdk FbxAgent MathLib)
 
 include(GoogleTest)
 gtest_discover_tests(${TestName})

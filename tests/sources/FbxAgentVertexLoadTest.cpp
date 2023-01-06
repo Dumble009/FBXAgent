@@ -1,12 +1,20 @@
 ﻿#include <gtest/gtest.h>
 
 #include <algorithm>
+#include <vector>
 #include "FbxAgent.h"
 
-#include "internal/common/CommonUtil.h"
+#include "Vector/Vector2.h"
+#include "Vector/Vector3.h"
 
-#define IsVector3ContainedInVector(x, y, z, v) ASSERT_EQ(IsValueContainedInVector(Vector3(x, y, z), v), true)
-#define IsVector2ContainedInVector(x, y, v) ASSERT_EQ(IsValueContainedInVector(Vector2(x, y), v), true)
+template <class T>
+bool IsValueContainedInVector(const T &val, const std::vector<T> *v)
+{
+    return v->end() != std::find(v->begin(), v->end(), val);
+}
+
+#define IsVector3ContainedInVector(x, y, z, v) ASSERT_EQ(IsValueContainedInVector(math::Vector3(x, y, z), v), true)
+#define IsVector2ContainedInVector(x, y, v) ASSERT_EQ(IsValueContainedInVector(math::Vector2(x, y), v), true)
 
 using namespace fbxAgent;
 
@@ -49,7 +57,7 @@ void LoadTestBody(const std::string &fileName)
     IsVector3ContainedInVector(-1, -1, -1, vertexPositions);
 
     auto vertexUVs = model->GetVertexUVs();
-    auto firstLayer = std::vector<Vector2>();
+    auto firstLayer = std::vector<math::Vector2>();
 
     for (auto itr = vertexUVs->begin(); itr != vertexUVs->end(); itr++)
     {
